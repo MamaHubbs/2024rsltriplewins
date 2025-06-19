@@ -1,9 +1,9 @@
-I'd like to add an athlete search to this html: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>2024 RSL Weekly Triple Winner Report</title>
- <style>
+  <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
@@ -40,7 +40,7 @@ I'd like to add an athlete search to this html: <!DOCTYPE html>
       margin-bottom: 6px;
     }
 
-    select {
+    select, input[type="text"] {
       padding: 3px 6px;
       font-size: 0.7em;
       border-radius: 4px;
@@ -133,12 +133,12 @@ I'd like to add an athlete search to this html: <!DOCTYPE html>
         <option value="all">All Weeks</option>
         <option value="2024resultsweek01.json">Week #1 (06/02/2024)</option>
         <option value="2024resultsweek02.json">Week #2 (06/09/2024)</option>
-                  <option value="2024resultsweek03.json">Week #3 (06/16/2024)</option>
-                  <option value="2024resultsweek04.json">Week #4 (06/23/2024)</option>
-                  <option value="2024resultsweek05.json">Week #5 (06/30/2024)</option>
-                  <option value="2024resultsweek06.json">Week #6 (07/07/2024)</option>
-                  <option value="2024resultsweek07.json">Week #7 (07/14/2024)</option>
-                  <option value="2024resultsweek08.json">Week #8 (07/21/2024)</option>
+        <option value="2024resultsweek03.json">Week #3 (06/16/2024)</option>
+        <option value="2024resultsweek04.json">Week #4 (06/23/2024)</option>
+        <option value="2024resultsweek05.json">Week #5 (06/30/2024)</option>
+        <option value="2024resultsweek06.json">Week #6 (07/07/2024)</option>
+        <option value="2024resultsweek07.json">Week #7 (07/14/2024)</option>
+        <option value="2024resultsweek08.json">Week #8 (07/21/2024)</option>
       </select>
     </div>
 
@@ -168,6 +168,11 @@ I'd like to add an athlete search to this html: <!DOCTYPE html>
       <select id="meetNameSelect">
         <option value="all">All Meets</option>
       </select>
+    </div>
+
+    <div class="dropdown-box">
+      <label for="athleteSearch">Search Athlete:</label>
+      <input type="text" id="athleteSearch" placeholder="Enter athlete name" oninput="renderTable(weekData)" />
     </div>
   </div>
 
@@ -319,21 +324,16 @@ I'd like to add an athlete search to this html: <!DOCTYPE html>
       });
     }
 
-   function renderTable(data) {
+    function renderTable(data) {
       let filtered = [...data];
       if (dateSelect.value !== 'all') filtered = filtered.filter(row => row[5] === dateSelect.value);
       if (meetSelect.value !== 'all') filtered = filtered.filter(row => row[6] === meetSelect.value);
       if (divisionSelect.value !== 'all') filtered = filtered.filter(row => teamDivisionMap[row[2]] === divisionSelect.value);
       if (teamSelect.value !== 'all') filtered = filtered.filter(row => row[2] === teamSelect.value);
 
-      if (currentSort.index !== null) {
-        filtered.sort((a, b) => {
-          const valA = a[currentSort.index];
-          const valB = b[currentSort.index];
-          return typeof valA === 'number'
-            ? currentSort.direction * (valA - valB)
-            : currentSort.direction * valA.localeCompare(valB);
-        });
+      const search = document.getElementById('athleteSearch')?.value?.trim().toLowerCase();
+      if (search) {
+        filtered = filtered.filter(row => row[0].toLowerCase().includes(search));
       }
 
       const grouped = {};
